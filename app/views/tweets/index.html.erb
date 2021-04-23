@@ -1,0 +1,10 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Tweets</h1>
+
+<%= render 'shared/content_tweet' %>
+
+<%= paginate @tweets %>
+
+<%= link_to 'New Tweet', new_tweet_path %>
+

@@ -1,0 +1,35 @@
+    <% if current_user %>
+    <%= render 'form', tweet: @tweet %>
+    <% end %>    
+
+    <% @tweets.each do |tweet| %>
+
+    <div class="card mb-3" style="max-width: 540px;">
+        <div class="row g-0">
+        <div class="col-md-4">
+            <%= image_tag(tweet.user.photo_avatar, width: "50%")  %> say:
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+            <% if tweet.origin_tweet.nil? %>
+            <p class="card-text"><%= tweet.content%></p>
+            <% else %>
+            <%= image_tag(tweet.original_tweet.user.photo_avatar, width: "50%")%> 
+            <%= tweet.original_tweet.user.name %>  say:
+            <div class= "container mx-auto">
+            <%= tweet.content %>
+            </div>
+            <% end %>
+            <%= link_to 'like', tweet_like_path(tweet), method: :post %>
+            <%= tweet.likes.count %>
+            <%= link_to 'retweet', tweet_retweet_path(tweet), method: :post %>
+
+            <%= link_to tweet_path(tweet) do %>
+                <small><%= time_ago_in_words(tweet.created_at) %> ago</small>
+                <% end %> 
+            </div>
+        </div>
+        </div>
+    </div>
+    <% end %>
+    
