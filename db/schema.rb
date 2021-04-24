@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_23_055827) do
+ActiveRecord::Schema.define(version: 2021_04_24_063930) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -38,6 +38,19 @@ ActiveRecord::Schema.define(version: 2021_04_23_055827) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "apis", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "friends", force: :cascade do |t|
+    t.integer "follower_id"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_friends_on_user_id"
+  end
+
   create_table "likes", force: :cascade do |t|
     t.integer "user_id"
     t.integer "tweet_id"
@@ -47,6 +60,12 @@ ActiveRecord::Schema.define(version: 2021_04_23_055827) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "tags", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tweets", force: :cascade do |t|
     t.string "content"
     t.integer "origin_tweet"
@@ -54,6 +73,13 @@ ActiveRecord::Schema.define(version: 2021_04_23_055827) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_tweets_on_user_id"
+  end
+
+  create_table "tweets_tags", id: false, force: :cascade do |t|
+    t.integer "tweet_id"
+    t.integer "tag_id"
+    t.index ["tag_id"], name: "index_tweets_tags_on_tag_id"
+    t.index ["tweet_id"], name: "index_tweets_tags_on_tweet_id"
   end
 
   create_table "users", force: :cascade do |t|

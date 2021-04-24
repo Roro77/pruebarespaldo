@@ -1,13 +1,40 @@
     <% if current_user %>
+    <h3><%= "Welcome #{current_user.name}!"%></h3>
+    <br>
     <%= render 'form', tweet: @tweet %>
-    <% end %>    
+    <% else  %>
+    <br>
+    <h2><%= link_to "New here? Join Us!", new_user_registration_path %></h2>
+    <% end %>
+    <br> 
+    <br>
+
 
     <% @tweets.each do |tweet| %>
 
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
         <div class="col-md-4">
-            <%= image_tag(tweet.user.photo_avatar, width: "50%")  %> say:
+        <%= image_tag(tweet.user.photo_avatar, width: "50%") %>
+        <br>
+        <td><%= render_with_hashtags(tweet.content) %></td>
+        <td><%= tweet.user.name %>
+        <% if current_user %>
+            <% if current_user.friends.pluck(:follower_id).include?(tweet.user.id) %>
+
+            <%= link_to 'UnFollow', tweet_unfollower_path(tweet), method: :delete %>
+
+            <% elsif current_user.id == tweet.user.id %>
+        
+            <% else %>
+                <%= link_to 'Follow', tweet_friend_path(tweet), method: :post %>
+            <% end %>
+        
+        <% else %>
+
+        <% end %>
+        </td>
+
         </div>
         <div class="col-md-8">
             <div class="card-body">
@@ -15,7 +42,7 @@
             <p class="card-text"><%= tweet.content%></p>
             <% else %>
             <%= image_tag(tweet.original_tweet.user.photo_avatar, width: "50%")%> 
-            <%= tweet.original_tweet.user.name %>  say:
+            <%= tweet.original_tweet.user.name %> 
             <div class= "container mx-auto">
             <%= tweet.content %>
             </div>

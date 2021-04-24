@@ -1,16 +1,23 @@
 class TweetsController < ApplicationController
-  before_action :set_tweet, only: %i[ show edit update destroy ]
+  before_action :set_tweet, only: %i[ show edit update destroy friend unfollower ]
   before_action :authenticate_user!, except: :index
 
   # GET /tweets or /tweets.json
 
 
-  def index
-    @tweets = Tweet.order(created_at: 'desc').page(params[:page]).per(50)
+def index
+    @tweets = Tweet.order('created_at DESC').page(params[:page]).per(50)
     @tweet = Tweet.new
-  end
+end
 
-  def like
+
+def friends
+    @tweets = Tweet.order('created_at DESC').page(params[:page]).tweets_for_me(current_user.friends.pluck(:follower_id))
+    @tweet = Tweet.new
+end
+
+
+def like
     if current_user
       @tweet = Tweet.find(params[:tweet_id])
       if is_liked?
@@ -22,9 +29,9 @@ class TweetsController < ApplicationController
       redirect_to new_session_path
     end
       redirect_to root_path
-  end
+end
 
-  def retweet
+def retweet
     if current_user
       @tweet = Tweet.find(params[:tweet_id])
       Tweet.create(content: @tweet.content, user_id: current_user.id, origin_tweet: @tweet.id)
@@ -32,7 +39,30 @@ class TweetsController < ApplicationController
       redirect_to new_session_path
     end
       redirect_to root_path
-  end
+end
+
+def hashtags
+  tag = Tag.find_by(name: params[:name])
+  @q = tag.tweets.order('created_at DESC').page(params[:page]).ransack(params[:q])
+  @tweets = @q.result(distinct: true)
+  @tweet = Tweet.new
+end
+
+
+
+def friend
+    Friend.create(user_id: current_user.id, follower_id: @tweet.user_id)
+    redirect_to root_path, notice: "You are now following #{@tweet.user}'s tweets"
+end
+
+
+def unfollower
+  @friend = Friend.find_by(follower_id: @tweet.user.id)
+  @friend.destroy
+  redirect_to root_path, notice: "You're no longer following #{@tweet.user}'s tweets"
+end
+
+
 
   # GET /tweets/1 or /tweets/1.json
   def show
