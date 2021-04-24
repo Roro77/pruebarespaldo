@@ -28,6 +28,7 @@ ActiveAdmin.register User do
     end
     actions
   end
+
   # or
   #
   # permit_params do

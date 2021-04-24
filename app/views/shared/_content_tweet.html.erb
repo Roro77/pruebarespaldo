@@ -17,7 +17,7 @@
         <div class="col-md-4">
         <%= image_tag(tweet.user.photo_avatar, width: "50%") %>
         <br>
-        <td><%= render_with_hashtags(tweet.content) %></td>
+        <td><%= tweet.html_content(tweet.content) %></td>
         <td><%= tweet.user.name %>
         <% if current_user %>
             <% if current_user.friends.pluck(:follower_id).include?(tweet.user.id) %>

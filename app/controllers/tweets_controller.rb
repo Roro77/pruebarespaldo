@@ -1,5 +1,5 @@
 class TweetsController < ApplicationController
-  before_action :set_tweet, only: %i[ show edit update destroy friend unfollower ]
+  before_action :set_tweet, only: %i[ show edit update destroy unfollower ]
   before_action :authenticate_user!, except: :index
 
   # GET /tweets or /tweets.json

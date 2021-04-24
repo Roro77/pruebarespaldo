@@ -5,24 +5,27 @@ class Tweet < ApplicationRecord
   scope :tweets_for_me, ->(friends) {where(user_id: friends)}
   has_and_belongs_to_many :tags
   
-  after_create do
-    tweet = Tweet.find_by(id: self.id)
-    hastags = self.content.scan(/#\w+/)
-    hastags.uniq.map do |hashtag|
-    tag = Tag.find_or_create_by(name: hashtag.downcase.delete('#'))
-    tweet.tags << tag
+def html_content(text)
+    words = text.split(" ")
+    new_content = words.uniq.map do |word|
+      if word.include?("#")
+        return "<a href='#'>#{word}</a>"
+      else
+        return word
+      end
     end
-  end
+    new_content.join(" ")
+end
     
-  after_update do
-    tweet = Tweet.find_by(id: self.id)
-    tweet.tags.clear
-    hastags = self.content.scan(/#\w+/)
-    hastags.uniq.map do |hashtag|
-    tag = Tag.find_or_create_by(name: hashtag.downcase.delete('#'))
-    tweet.tags << tag
-    end
-  end 
+  # after_update do
+  #   tweet = Tweet.find_by(id: self.id)
+  #   tweet.tags.clear
+  #   hastags = self.content.scan(/#\w+/)
+  #   hastags.uniq.map do |hashtag|
+  #   tag = Tag.find_or_create_by(name: hashtag.downcase.delete('#'))
+  #   tweet.tags << tag
+  #   end
+  # end 
 
   def add_like(user)
     Like.create(user: user, tweet: self)
